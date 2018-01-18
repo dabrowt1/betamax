@@ -1,6 +1,6 @@
 package co.freeside.betamax
 
-import co.freeside.betamax.httpclient.BetamaxHttpsSupport
+
 import co.freeside.betamax.util.httpbuilder.BetamaxRESTClient
 import groovyx.net.http.*
 import org.junit.Rule
@@ -11,7 +11,7 @@ import static org.apache.http.HttpHeaders.VIA
 @Unroll
 class SmokeSpec extends Specification {
 
-	@Rule Recorder recorder = new ProxyRecorder(sslSupport: true)
+	@Rule Recorder recorder = new ProxyRecorder()
 
 	@Shared RESTClient http = new BetamaxRESTClient()
 
@@ -32,21 +32,6 @@ class SmokeSpec extends Specification {
 		'css'  | 'http://d297h9he240fqh.cloudfront.net/cache-1633a825c/assets/views_one.css'
 	}
 
-	@Betamax(tape = 'smoke spec')
-	void 'https proxying'() {
-		setup:
-		BetamaxHttpsSupport.configure(http.client)
-
-		when:
-		HttpResponseDecorator response = http.get(uri: uri)
-
-		then:
-		response.status == HTTP_OK
-
-		where:
-		uri = 'https://github.com/robfletcher/betamax/'
-	}
-
 	@Issue('https://github.com/robfletcher/betamax/issues/52')
 	@Betamax(tape = 'ocsp')
 	void 'OCSP messages'() {
@@ -59,17 +44,16 @@ class SmokeSpec extends Specification {
 	}
 
 	@Issue(['https://github.com/robfletcher/betamax/issues/61', 'http://jira.codehaus.org/browse/JETTY-1533'])
-	@Ignore('Jetty issue is fixed but not yet in a release once it is it will solve this problem')
 	@Betamax(tape = 'smoke spec')
 	void 'can cope with URLs that do not end in a slash'() {
 		given:
-		def uri = 'http://freeside.co'
+		def uri = 'http://groovy-lang.org'
 
 		when:
 		HttpResponseDecorator response = http.get(uri: uri)
 
 		then:
 		response.status == HTTP_OK
-		response.getFirstHeader(VIA) == 'Betamax'
+		response.getFirstHeader(VIA).value == 'Betamax'
 	}
 }

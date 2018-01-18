@@ -1,6 +1,7 @@
 package co.freeside.betamax.util.servlet
 
 import javax.servlet.ServletOutputStream
+import javax.servlet.WriteListener
 
 class MockServletOutputStream extends ServletOutputStream {
 
@@ -30,4 +31,13 @@ class MockServletOutputStream extends ServletOutputStream {
 		delegate.body = stream.toByteArray()
 	}
 
+	@Override
+	boolean isReady() {
+		throw new UnsupportedOperationException()
+	}
+
+	@Override
+	void setWriteListener(WriteListener listener) {
+		throw new UnsupportedOperationException()
+	}
 }

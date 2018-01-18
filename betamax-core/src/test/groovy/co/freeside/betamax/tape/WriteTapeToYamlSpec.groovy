@@ -21,27 +21,27 @@ class WriteTapeToYamlSpec extends Specification {
 
 	void setupSpec() {
 		getRequest = new BasicRequest('GET', 'http://freeside.co/betamax')
-		getRequest.addHeader(ACCEPT_LANGUAGE, 'en-GB,en')
-		getRequest.addHeader(IF_NONE_MATCH, 'b00b135')
+		getRequest.addHeader(ACCEPT_LANGUAGE.toString(), 'en-GB,en')
+		getRequest.addHeader(IF_NONE_MATCH.toString(), 'b00b135')
 
 		postRequest = new BasicRequest('POST', 'http://github.com/')
 		postRequest.body = 'q=1'.bytes
 
 		successResponse = new BasicResponse(HTTP_OK, 'OK')
-		successResponse.addHeader(CONTENT_TYPE, 'text/plain')
-		successResponse.addHeader(CONTENT_LANGUAGE, 'en-GB')
-		successResponse.addHeader(CONTENT_ENCODING, 'none')
+		successResponse.addHeader(CONTENT_TYPE.toString(), 'text/plain')
+		successResponse.addHeader(CONTENT_LANGUAGE.toString(), 'en-GB')
+		successResponse.addHeader(CONTENT_ENCODING.toString(), 'none')
 		successResponse.body = 'O HAI!'.getBytes('UTF-8')
 
 		failureResponse = new BasicResponse(HTTP_BAD_REQUEST, 'BAD REQUEST')
-		failureResponse.addHeader(CONTENT_TYPE, 'text/plain')
-		failureResponse.addHeader(CONTENT_LANGUAGE, 'en-GB')
-		failureResponse.addHeader(CONTENT_ENCODING, 'none')
+		failureResponse.addHeader(CONTENT_TYPE.toString(), 'text/plain')
+		failureResponse.addHeader(CONTENT_LANGUAGE.toString(), 'en-GB')
+		failureResponse.addHeader(CONTENT_ENCODING.toString(), 'none')
 		failureResponse.body = 'KTHXBYE!'.getBytes('UTF-8')
 
 		image = new File(Class.getResource('/image.png').toURI())
 		imageResponse = new BasicResponse(HTTP_OK, 'OK')
-		imageResponse.addHeader(CONTENT_TYPE, 'image/png')
+		imageResponse.addHeader(CONTENT_TYPE.toString(), 'image/png')
 		imageResponse.body = image.bytes
 	}
 

@@ -1,7 +1,3 @@
-repositories {
-	mavenRepo url: 'http://repository.codehaus.org'
-}
-
 dependencies {
 	compile project(':betamax-core')
 	compile project(':betamax-jetty')

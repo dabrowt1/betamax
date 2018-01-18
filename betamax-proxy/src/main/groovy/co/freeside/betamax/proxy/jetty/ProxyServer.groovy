@@ -16,106 +16,72 @@
 
 package co.freeside.betamax.proxy.jetty
 
-import co.freeside.betamax.*
+import co.freeside.betamax.HttpInterceptor
+import co.freeside.betamax.ProxyRecorder
 import co.freeside.betamax.handler.DefaultHandlerChain
-import co.freeside.betamax.proxy.ssl.DummySSLSocketFactory
-import co.freeside.betamax.util.*
+import co.freeside.betamax.util.Network
+import co.freeside.betamax.util.ProxyOverrider
 import org.apache.http.client.HttpClient
-import org.apache.http.conn.scheme.Scheme
 import org.apache.http.impl.client.DefaultHttpClient
-import org.apache.http.impl.conn.*
+import org.apache.http.impl.conn.PoolingClientConnectionManager
+import org.apache.http.impl.conn.ProxySelectorRoutePlanner
 import org.apache.http.params.HttpConnectionParams
-import org.eclipse.jetty.server.*
-import org.eclipse.jetty.server.ssl.SslSelectChannelConnector
+
 import static ProxyRecorder.DEFAULT_PROXY_PORT
 
 class ProxyServer extends SimpleServer implements HttpInterceptor {
 
-	private final ProxyRecorder recorder
-	private final ProxyOverrider proxyOverrider = new ProxyOverrider()
-	private final SSLOverrider sslOverrider = new SSLOverrider()
+  private final ProxyRecorder recorder
+  private final ProxyOverrider proxyOverrider = new ProxyOverrider()
 
-	ProxyServer(ProxyRecorder recorder) {
-		super(DEFAULT_PROXY_PORT)
-		this.recorder = recorder
-	}
+  ProxyServer(ProxyRecorder recorder) {
+    super(DEFAULT_PROXY_PORT)
+    this.recorder = recorder
+  }
 
-	void start() {
-		port = recorder.proxyPort
+  void start() {
+    port = recorder.proxyPort
 
-		def handler = new BetamaxProxy()
-		handler << new DefaultHandlerChain(recorder, newHttpClient())
+    def handler = new BetamaxProxy()
+    handler << new DefaultHandlerChain(recorder, newHttpClient())
 
-		def connectHandler = new CustomConnectHandler(handler, port + 1)
+    def connectHandler = new CustomConnectHandler(handler, port + 1)
 
-		super.start(connectHandler)
+    super.start(connectHandler)
 
-		overrideProxySettings()
-		overrideSSLSettings()
-	}
+    overrideProxySettings()
+  }
 
-	@Override
-	void stop() {
-		restoreOriginalProxySettings()
-		restoreOriginalSSLSettings()
-		super.stop()
-	}
+  @Override
+  void stop() {
+    restoreOriginalProxySettings()
+    super.stop()
+  }
 
-	private HttpClient newHttpClient() {
-		def connectionManager = new PoolingClientConnectionManager()
-		def httpClient = new DefaultHttpClient(connectionManager)
-		httpClient.routePlanner = new ProxySelectorRoutePlanner(
-				httpClient.connectionManager.schemeRegistry,
-				proxyOverrider.originalProxySelector
-		)
-		if (recorder.sslSupport) {
-			connectionManager.schemeRegistry.register new Scheme('https', recorder.sslSocketFactory, 443)
-		}
-		HttpConnectionParams.setConnectionTimeout(httpClient.params, recorder.proxyTimeout)
-		HttpConnectionParams.setSoTimeout(httpClient.params, recorder.proxyTimeout)
-		httpClient
-	}
+  private HttpClient newHttpClient() {
+    def connectionManager = new PoolingClientConnectionManager()
+    def httpClient = new DefaultHttpClient(connectionManager)
+    httpClient.routePlanner = new ProxySelectorRoutePlanner(
+        httpClient.connectionManager.schemeRegistry,
+        proxyOverrider.originalProxySelector
+    )
+    HttpConnectionParams.setConnectionTimeout(httpClient.params, recorder.proxyTimeout)
+    HttpConnectionParams.setSoTimeout(httpClient.params, recorder.proxyTimeout)
+    httpClient
+  }
 
-	@Override
-	protected Server createServer(int port) {
-		def server = super.createServer(port)
-		server.addConnector(createSSLConnector(port + 1))
-		server
-	}
+  private void overrideProxySettings() {
+    def proxyHost = InetAddress.localHost.hostAddress
+    def nonProxyHosts = recorder.ignoreHosts as Set
+    if (recorder.ignoreLocalhost) {
+      nonProxyHosts.addAll(Network.localAddresses)
+    }
+    proxyOverrider.activate proxyHost, port, nonProxyHosts
+  }
 
-	private Connector createSSLConnector(int port) {
-		new SslSelectChannelConnector(
-				port: port, // TODO: separate property
-				keystore: ProxyServer.getResource('/betamax.keystore'),
-				password: 'password',
-				keyPassword: 'password'
-		)
-	}
-
-	private void overrideProxySettings() {
-		def proxyHost = InetAddress.localHost.hostAddress
-		def nonProxyHosts = recorder.ignoreHosts as Set
-		if (recorder.ignoreLocalhost) {
-			nonProxyHosts.addAll(Network.localAddresses)
-		}
-		proxyOverrider.activate proxyHost, port, nonProxyHosts
-	}
-
-	private void restoreOriginalProxySettings() {
-		proxyOverrider.deactivateAll()
-	}
-
-	private void overrideSSLSettings() {
-		if (recorder.sslSupport) {
-			sslOverrider.activate()
-		}
-	}
-
-	private void restoreOriginalSSLSettings() {
-		if (recorder.sslSupport) {
-			sslOverrider.deactivate()
-		}
-	}
+  private void restoreOriginalProxySettings() {
+    proxyOverrider.deactivateAll()
+  }
 
 }
 

@@ -3,6 +3,7 @@ package co.freeside.betamax.httpclient
 import co.freeside.betamax.*
 import co.freeside.betamax.handler.HandlerException
 import co.freeside.betamax.proxy.jetty.SimpleServer
+import co.freeside.betamax.util.FileUtils
 import co.freeside.betamax.util.Network
 import co.freeside.betamax.util.server.*
 import groovyx.net.http.RESTClient
@@ -22,7 +23,7 @@ import static org.apache.http.entity.ContentType.APPLICATION_FORM_URLENCODED
 @Issue('https://github.com/robfletcher/betamax/issues/40')
 class BetamaxHttpClientSpec extends Specification {
 
-	@Shared @AutoCleanup('deleteDir') File tapeRoot = co.freeside.betamax.util.FileUtils.newTempDir('tapes')
+	@Shared @AutoCleanup('deleteDir') File tapeRoot = FileUtils.newTempDir('tapes')
 	@Rule Recorder recorder = new Recorder(tapeRoot: tapeRoot)
 	@AutoCleanup('stop') SimpleServer endpoint = new SimpleServer()
 	def http = new BetamaxHttpClient(recorder)

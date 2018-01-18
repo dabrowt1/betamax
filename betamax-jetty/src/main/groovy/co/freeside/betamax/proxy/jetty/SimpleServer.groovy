@@ -107,7 +107,7 @@ class SimpleServer extends AbstractLifeCycleListener {
 		stoppedLatch.countDown()
 	}
 
-	protected Server createServer(int port) {
+	protected static Server createServer(int port) {
 		new Server(port)
     }
 

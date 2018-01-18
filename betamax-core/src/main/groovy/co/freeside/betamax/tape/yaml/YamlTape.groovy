@@ -47,7 +47,7 @@ class YamlTape extends MemoryTape implements StorableTape {
 	}
 
 	@Override
-	void record(Request request, Response response) {
+	synchronized void record(Request request, Response response) {
 		super.record(request, response)
 		dirty = true
 	}

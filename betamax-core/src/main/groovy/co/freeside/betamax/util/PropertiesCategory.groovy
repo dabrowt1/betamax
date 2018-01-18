@@ -13,7 +13,7 @@ class PropertiesCategory {
 		value ? value.toInteger() : defaultValue
 	}
 
-	public <T> T getEnum(String key, T defaultValue) {
+  def <T> T getEnum(String key, T defaultValue) {
 		def value = this.getProperty(key)
 		value ? Enum.valueOf(defaultValue.getClass(), value) : defaultValue
 	}

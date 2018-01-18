@@ -21,8 +21,8 @@ class BetamaxProxySpec extends Specification {
 
 	void setup() {
 		betamaxResponse = new BasicResponse(200, 'OK')
-		betamaxResponse.addHeader(ETAG, UUID.randomUUID().toString())
-		betamaxResponse.addHeader(VIA, 'Proxy 1, Proxy 2')
+		betamaxResponse.addHeader(ETAG.toString(), UUID.randomUUID().toString())
+		betamaxResponse.addHeader(VIA.toString(), 'Proxy 1, Proxy 2')
 		betamaxResponse.body = 'O HAI'.bytes
 	}
 

@@ -4,7 +4,7 @@ import javax.servlet.http.*
 import org.eclipse.jetty.server.Request
 import org.eclipse.jetty.server.handler.AbstractHandler
 import static org.eclipse.jetty.http.HttpStatus.OK_200
-import static org.eclipse.jetty.http.MimeTypes.TEXT_PLAIN
+import static org.eclipse.jetty.http.MimeTypes.Type.TEXT_PLAIN
 
 class HelloHandler extends AbstractHandler {
 

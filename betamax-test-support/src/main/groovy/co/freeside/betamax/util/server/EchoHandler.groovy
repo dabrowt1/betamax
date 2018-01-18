@@ -21,7 +21,7 @@ import java.util.zip.*
 import javax.servlet.http.*
 import org.eclipse.jetty.server.Request
 import org.eclipse.jetty.server.handler.AbstractHandler
-import static org.eclipse.jetty.http.HttpHeaders.*
+import static org.eclipse.jetty.http.HttpHeader.*
 import static org.eclipse.jetty.http.HttpStatus.OK_200
 
 class EchoHandler extends AbstractHandler {
@@ -53,21 +53,21 @@ class EchoHandler extends AbstractHandler {
 		}
 	}
 
-	private Writer getResponseWriter(HttpServletRequest request, HttpServletResponse response) {
+	private static Writer getResponseWriter(HttpServletRequest request, HttpServletResponse response) {
 		def out
-		def acceptedEncodings = request.getHeader(ACCEPT_ENCODING)?.tokenize(',')
+		def acceptedEncodings = request.getHeader(ACCEPT_ENCODING.toString())?.tokenize(',')
 		log.fine "request accepts $acceptedEncodings"
 		if ('gzip' in acceptedEncodings) {
 			log.fine 'gzipping...'
-			response.addHeader(CONTENT_ENCODING, 'gzip')
+			response.addHeader(CONTENT_ENCODING.toString(), 'gzip')
 			out = new OutputStreamWriter(new GZIPOutputStream(response.outputStream))
 		} else if ('deflate' in acceptedEncodings) {
 			log.fine 'deflating...'
-			response.addHeader(CONTENT_ENCODING, 'deflate')
+			response.addHeader(CONTENT_ENCODING.toString(), 'deflate')
 			out = new OutputStreamWriter(new DeflaterOutputStream(response.outputStream))
 		} else {
 			log.fine 'not encoding...'
-			response.addHeader(CONTENT_ENCODING, 'none')
+			response.addHeader(CONTENT_ENCODING.toString(), 'none')
 			out = response.writer
 		}
 		out

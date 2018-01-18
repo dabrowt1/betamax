@@ -42,7 +42,7 @@ class MultiThreadedTapeWritingSpec extends Specification {
 		}
 
 		then: 'all threads complete'
-		finished.await(1, SECONDS)
+		finished.await(5, SECONDS)
 
 		and: 'the correct response is returned to each request'
 		responses.every {

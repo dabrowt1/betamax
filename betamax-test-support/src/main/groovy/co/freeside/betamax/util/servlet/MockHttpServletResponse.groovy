@@ -39,9 +39,16 @@ class MockHttpServletResponse implements HttpServletResponse {
 		headers[name]?.join(', ')
 	}
 
-	final Enumeration getHeaders(String name) {
-		def itr = headers.containsKey(name) ? headers[name].iterator() : EmptyIterator.INSTANCE
-		new IteratorEnumeration(itr)
+	// 2018
+	final Collection<String> getHeaders(String name) {
+		// def itr = headers.containsKey(name) ? headers[name].iterator() : EmptyIterator.INSTANCE
+		// new IteratorEnumeration(itr)
+		headers[name]
+	}
+
+	// 2018
+	final Collection<String> getHeaderNames() {
+		headers.keySet()
 	}
 
 	@Override
@@ -139,6 +146,11 @@ class MockHttpServletResponse implements HttpServletResponse {
 
 	@Override
 	void setContentLength(int len) {
+		throw new UnsupportedOperationException()
+	}
+
+	@Override
+	void setContentLengthLong(long len) {
 		throw new UnsupportedOperationException()
 	}
 

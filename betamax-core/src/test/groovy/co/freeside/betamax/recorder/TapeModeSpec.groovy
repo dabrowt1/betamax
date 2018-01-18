@@ -92,7 +92,6 @@ interactions:
 	}
 
 	@Issue('https://github.com/robfletcher/betamax/issues/7')
-	@Issue('https://github.com/robfletcher/betamax/pull/70')
 	void 'in write-sequential mode the proxy records additional interactions'() {
 		given: 'an existing tape file is inserted in write-sequential mode'
 		def tapeFile = new File(tapeRoot, 'write_sequential_tape.yaml')

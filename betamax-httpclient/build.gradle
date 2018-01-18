@@ -1,7 +1,3 @@
-repositories {
-	mavenRepo url: 'http://repository.codehaus.org'
-}
-
 dependencies {
 	compile project(':betamax-core')
 
@@ -10,11 +6,5 @@ dependencies {
 		exclude module: 'groovy'
 		exclude module: 'httpclient'
 	}
-}
-
-modifyPom {
-	project {
-		name 'Betamax HTTPClient'
-		description 'The Apache HTTPClient wrapper implementation of Betamax.'
-	}
+  testCompile 'org.springframework:spring-web:5.0.2.RELEASE'
 }

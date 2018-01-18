@@ -46,7 +46,7 @@ class BetamaxRequestDirector implements RequestDirector {
 		)
 		responseWrapper.headers.each { name, value ->
 			value.tokenize(',').each {
-				response.addHeader(name, it.trim())
+				response.addHeader(name.toString(), it.trim())
 			}
 		}
 		if (responseWrapper.hasBody()) {

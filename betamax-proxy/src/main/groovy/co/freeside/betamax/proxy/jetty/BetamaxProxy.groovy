@@ -36,11 +36,11 @@ class BetamaxProxy extends AbstractHandler {
 		handlerChain
 	}
 
-	private void sendResponse(Response betamaxResponse, HttpServletResponse response) {
+	private static void sendResponse(Response betamaxResponse, HttpServletResponse response) {
 		response.status = betamaxResponse.status
 		betamaxResponse.headers.each { name, value ->
 			value.split(/,\s*/).each {
-				response.addHeader(name, it)
+				response.addHeader(name.toString(), it)
 			}
 		}
 		if (betamaxResponse.hasBody()) {

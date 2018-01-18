@@ -152,7 +152,7 @@ class ProxyOverriderSpec extends Specification {
 		scheme = uri.scheme
 	}
 
-	private void setupProxy(String host, int port, String nonProxyHosts = null) {
+	private static void setupProxy(String host, int port, String nonProxyHosts = null) {
 		System.with {
 			for (scheme in ['http', 'https']) {
 				properties."${scheme}.proxyHost" = host

@@ -99,7 +99,7 @@ class MemoryTape implements Tape {
 		}
 	}
 
-	private String stringify(Request request) {
+	private static String stringify(Request request) {
 		[
 			method: request.method,
 			uri: request.uri,
@@ -183,7 +183,7 @@ class MemoryTape implements Tape {
 	static boolean isPrintable(String s) {
 		// this check is performed by SnakeYaml but we need to do so *before* unzipping the byte stream otherwise we
 		// won't be able to read it back again.
-		!(s =~ StreamReader.NON_PRINTABLE)
+		StreamReader.isPrintable(s)
 	}
 
 }

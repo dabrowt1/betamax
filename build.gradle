@@ -2,28 +2,27 @@ buildscript {
 	repositories {
 		mavenCentral()
 	}
-	dependencies {
-		classpath 'org.gradle.api.plugins:gradle-nexus-plugin:0.2'
-		classpath 'org.ajoberstar:gradle-git:0.2.0'
-	}
 }
 
 allprojects {
-	version = '1.2-SNAPSHOT'
+	version = gradle.ext.appVersion
 	group = 'co.freeside'
 
 	ext {
-		groovyVersion = '1.8.8'
-		httpClientVersion = '4.2.2'
-		junitVersion = '4.10'
-		spockVersion = '0.7-groovy-1.8'
-		jettyVersion = '7.3.1.v20110307'
+		groovyVersion = '2.4.13'
+		httpClientVersion = '4.5.4'
+		junitVersion = '4.12'
+		spockVersion = '1.1-groovy-2.4'
+		jettyVersion = '9.4.8.v20171121'
 
 		groovyDependency = "org.codehaus.groovy:groovy-all:$groovyVersion"
 		httpClientDependency = "org.apache.httpcomponents:httpclient:$httpClientVersion"
 		junitDependency = "junit:junit:$junitVersion"
 		spockDependency = "org.spockframework:spock-core:$spockVersion"
 		jettyDependency = "org.eclipse.jetty:jetty-server:$jettyVersion"
+
+		// 2018
+		jettyProxyDependency = "org.eclipse.jetty:jetty-proxy:$jettyVersion"
 
 		publishedModules = [':betamax-core', ':betamax-proxy', ':betamax-httpclient', ':betamax-jetty']
 	}
@@ -32,13 +31,21 @@ allprojects {
 subprojects {
 	apply plugin: 'groovy'
 	apply plugin: 'codenarc'
+	apply plugin: 'project-report'
+	apply plugin: 'maven'
 
 	repositories {
+		mavenLocal()
 		mavenCentral()
+		maven { url "https://plugins.gradle.org/m2/" }
+	}
+
+	configurations {
+		deployerJars
 	}
 
 	dependencies {
-		groovy groovyDependency
+		compile groovyDependency
 
 		testCompile(spockDependency) {
 			exclude module: 'groovy-all'
@@ -60,62 +67,40 @@ subprojects {
 		}
 	}
 
-	if (path in publishedModules) {
-		apply plugin: 'nexus'
-
-		modifyPom {
-			dependencies.removeAll(dependencies.findAll { it.scope == 'test' })
-
-			project {
-				packaging 'jar'
-				url 'http://freeside.co/betamax'
-				inceptionYear '2011'
-
-				scm {
-					url 'scm:git@github.com:robfletcher/betamax.git'
-					connection 'scm:git@github.com:robfletcher/betamax.git'
-					developerConnection 'scm:git@github.com:robfletcher/betamax.git'
+	uploadArchives {
+		repositories {
+			mavenDeployer {
+				configuration = configurations.deployerJars
+				repository(url: gradle.artifactory.releaseRepository) {
+					authentication(userName: gradle.artifactory.user, password: gradle.artifactory.password)
 				}
-
-				licenses {
-					license {
-						name 'The Apache Software License, Version 2.0'
-						url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-						distribution 'repo'
-					}
-				}
-
-				developers {
-					developer {
-						id 'robfletcher'
-						name 'Rob Fletcher'
-						url 'http://freeside.co/'
-						roles {
-							role 'Lead'
-							role 'Founder'
-						}
-					}
+				snapshotRepository(url: gradle.artifactory.snapshotRepository) {
+					authentication(userName: gradle.artifactory.user, password: gradle.artifactory.password)
 				}
 			}
 		}
+	}
 
-		nexus {
-			sign = true
-		}
+	jar {
+		baseName = project.name
+	}
+
+	task sourcesJar(type: Jar, dependsOn: classes) {
+		baseName = project.name
+		classifier = 'sources'
+		from sourceSets.main.allSource
+	}
+
+	task testJar(type: Jar, dependsOn: testClasses) {
+		baseName = project.name
+		classifier = 'tests'
+		from sourceSets.test.output
+	}
+
+	artifacts {
+		archives sourcesJar
+		archives testJar
 	}
 }
-
-apply plugin: 'github-pages'
 
 //archivesBaseName = 'betamax'
-
-githubPages {
-	repoUri = 'git@github.com:robfletcher/betamax.git'
-	workingPath = "$buildDir/docs"
-	pages {
-		exclude '**/_site/**'
-		from('src/docs') {
-			exclude '**/*.less'
-		}
-	}
-}

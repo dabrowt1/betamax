@@ -12,7 +12,7 @@ class HeaderFilteringSpec extends Specification {
 
 		given: 'a servlet request'
 		def request = new BasicRequest()
-		request.addHeader(CONTENT_TYPE, 'text/plain')
+		request.addHeader(CONTENT_TYPE.toString(), 'text/plain')
 		request.addHeader(header, 'value')
 
 		when: 'we wrap it'
@@ -23,7 +23,7 @@ class HeaderFilteringSpec extends Specification {
 		filteringRequest.getHeader(header) == null
 
 		and: 'unfiltered headers are still available'
-		filteringRequest.getHeader(CONTENT_TYPE) == request.getHeader(CONTENT_TYPE)
+		filteringRequest.getHeader(CONTENT_TYPE.toString()) == request.getHeader(CONTENT_TYPE.toString())
 
 		where:
 		header << NO_PASS_HEADERS
@@ -42,7 +42,7 @@ class HeaderFilteringSpec extends Specification {
 
 		then: 'filtered headers are removed'
 		filteringResponse.headers.keySet() == [CONTENT_TYPE] as Set
-		filteringResponse.getHeader(header) == null
+		filteringResponse.getHeader(header.toString()) == null
 
 		and: 'unfiltered headers are still available'
 		filteringResponse.getHeader(CONTENT_TYPE) == response.getHeader(CONTENT_TYPE)

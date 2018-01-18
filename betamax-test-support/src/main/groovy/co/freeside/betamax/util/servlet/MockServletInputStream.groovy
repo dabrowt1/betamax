@@ -1,5 +1,6 @@
 package co.freeside.betamax.util.servlet
 
+import javax.servlet.ReadListener
 import javax.servlet.ServletInputStream
 
 class MockServletInputStream extends ServletInputStream {
@@ -26,4 +27,20 @@ class MockServletInputStream extends ServletInputStream {
 		delegate.reset()
 	}
 
+	// 2018
+	@Override
+	boolean isReady() {
+		// delegate.available() > 0
+		throw new UnsupportedOperationException()
+	}
+
+	@Override
+	boolean isFinished() {
+		throw new UnsupportedOperationException()
+	}
+
+	@Override
+	void setReadListener(ReadListener listener) {
+		throw new UnsupportedOperationException()
+	}
 }

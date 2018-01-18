@@ -26,7 +26,7 @@ class TapeReader extends ChainedHttpHandler {
 		} else if (tape.readable && tape.seek(request)) {
 			log.info "Playing back from '$tape.name'"
 			def response = tape.play(request)
-			response.addHeader(X_BETAMAX, 'PLAY')
+			response.addHeader(X_BETAMAX.toString(), 'PLAY'.toString())
 			response
 		} else if (tape.writable) {
 			chain(request)

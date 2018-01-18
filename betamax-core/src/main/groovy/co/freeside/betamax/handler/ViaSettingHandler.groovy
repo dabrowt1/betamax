@@ -9,7 +9,7 @@ class ViaSettingHandler extends ChainedHttpHandler {
 	@Override
 	Response handle(Request request) {
 		def response = chain request
-		response.addHeader VIA, VIA_HEADER
+		response.addHeader VIA.toString(), VIA_HEADER
 		response
 	}
 

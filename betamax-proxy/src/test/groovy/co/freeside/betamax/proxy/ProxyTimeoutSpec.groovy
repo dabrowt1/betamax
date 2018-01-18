@@ -35,7 +35,10 @@ class ProxyTimeoutSpec extends Specification {
 		then:
 		def e = thrown(HttpResponseException)
 		e.statusCode == HTTP_GATEWAY_TIMEOUT
-		e.message == "Timed out connecting to $endpoint.url"
+		// 2018 - toLowerCase because
+		// "Timed out connecting to http://dabrowt1-FZG3QC:5000/" vs
+		// "Timed out connecting to http://dabrowt1-fzg3qc:5000/"
+		e.message.toLowerCase() == "Timed out connecting to $endpoint.url".toLowerCase()
 	}
 
 }

@@ -88,7 +88,8 @@ enum MatchRule implements Comparator<Request> {
 		int compare(Request a, Request b) {
 			a.bodyAsText.text <=> b.bodyAsText.text
 		}
-	}
+	},
+	defaultMatchValue
 
 	int compare(Request a, Request b) {
 		throw new UnsupportedOperationException()

@@ -108,7 +108,9 @@ class OrderedRunner extends BlockJUnit4ClassRunner {
 
 	@Override
 	protected List<FrameworkMethod> computeTestMethods() {
-		super.computeTestMethods().sort {FrameworkMethod o1, FrameworkMethod o2 ->
+		def list = super.computeTestMethods()
+		list = list.toList()
+		list.sort {FrameworkMethod o1, FrameworkMethod o2 ->
 			ORDER.indexOf(o1.name) <=> ORDER.indexOf(o2.name)
 		}
 	}

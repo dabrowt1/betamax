@@ -15,13 +15,11 @@ import static org.apache.http.HttpHeaders.VIA
 class WsLiteSpec extends Specification {
 
 	@Shared @AutoCleanup('deleteDir') File tapeRoot = newTempDir('tapes')
-	@Rule ProxyRecorder recorder = new ProxyRecorder(tapeRoot: tapeRoot, defaultMode: WRITE_ONLY, sslSupport: true)
+	@Rule ProxyRecorder recorder = new ProxyRecorder(tapeRoot: tapeRoot, defaultMode: WRITE_ONLY)
 	@Shared @AutoCleanup('stop') SimpleServer endpoint = new SimpleServer()
-	@Shared @AutoCleanup('stop') SimpleServer httpsEndpoint = new SimpleSecureServer(5001)
 
 	void setupSpec() {
 		endpoint.start(EchoHandler)
-		httpsEndpoint.start(HelloHandler)
 	}
 
 	@Betamax(tape = 'wslite spec')
@@ -37,23 +35,4 @@ class WsLiteSpec extends Specification {
 		response.headers[VIA] == 'Betamax'
 		response.headers[X_BETAMAX] == 'REC'
 	}
-
-	@IgnoreIf({ javaVersion >= 1.6 && javaVersion < 1.7 })
-	@Betamax(tape = 'wslite spec')
-	void 'proxy intercepts HTTPS requests'() {
-		given: 'a properly configured wslite instance'
-		def http = new RESTClient(httpsEndpoint.url)
-
-		when: 'a request is made'
-		def response = http.get(path: '/', proxy: recorder.proxy)
-
-		then: 'the request is intercepted'
-		response.statusCode == HTTP_OK
-		response.headers[VIA] == 'Betamax'
-		response.headers[X_BETAMAX] == 'REC'
-
-		and: 'the response body is decoded'
-		response.contentAsString == 'Hello World!'
-	}
-
 }

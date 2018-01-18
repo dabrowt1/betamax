@@ -12,7 +12,6 @@ import static org.apache.http.HttpStatus.*
 import static org.apache.http.entity.ContentType.APPLICATION_JSON
 
 @Issue('https://github.com/robfletcher/betamax/issues/7')
-@Issue('https://github.com/robfletcher/betamax/pull/70')
 class SequentialTapeSpec extends Specification {
 
 	@Rule Recorder recorder = new Recorder()
@@ -64,7 +63,7 @@ class SequentialTapeSpec extends Specification {
 		given:
 		def getRequest = new BasicRequest('GET', url)
 		def postRequest = new BasicRequest('POST', url)
-		postRequest.addHeader(CONTENT_TYPE, APPLICATION_JSON.toString())
+		postRequest.addHeader(CONTENT_TYPE.toString(), APPLICATION_JSON.toString())
 		postRequest.body = '{"name":"foo"}'.bytes
 
 		when: 'multiple requests are made to the same endpoint'

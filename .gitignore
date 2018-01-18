@@ -2,7 +2,7 @@
 /.gradle
 /gradle.properties
 build/
-/out
+out/
 /_site
 *.iml
 *.ipr
@@ -13,3 +13,4 @@ build/
 /.gradletasknamecache
 /src/docs/_site/
 .DS_Store
+*.sublime-workspace

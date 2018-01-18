@@ -13,7 +13,6 @@ import static co.freeside.betamax.util.FileUtils.newTempDir
 import static org.apache.http.HttpStatus.SC_OK
 
 @Issue('https://github.com/robfletcher/betamax/issues/7')
-@Issue('https://github.com/robfletcher/betamax/pull/70')
 class SequentialTapeWritingSpec extends Specification {
 
 	@Shared @AutoCleanup('deleteDir') File tapeRoot = newTempDir('tapes')

@@ -16,9 +16,9 @@ class TapeSpec extends Specification {
 	Response plainTextResponse = new BasicResponse(status: 200, reason: 'OK', body: new GzipEncoder().encode('O HAI!', 'UTF-8'))
 
 	void setup() {
-		plainTextResponse.addHeader(CONTENT_TYPE, 'text/plain;charset=UTF-8')
-		plainTextResponse.addHeader(CONTENT_LANGUAGE, 'en-GB')
-		plainTextResponse.addHeader(CONTENT_ENCODING, 'gzip')
+		plainTextResponse.addHeader(CONTENT_TYPE.toString(), 'text/plain;charset=UTF-8')
+		plainTextResponse.addHeader(CONTENT_LANGUAGE.toString(), 'en-GB')
+		plainTextResponse.addHeader(CONTENT_ENCODING.toString(), 'gzip')
 	}
 
 	void cleanup() {
@@ -91,7 +91,7 @@ class TapeSpec extends Specification {
 		given: 'a request with some content'
 		def request = new BasicRequest('POST', 'http://github.com/')
 		request.body = 'q=1'.getBytes('UTF-8')
-		request.addHeader(CONTENT_TYPE, APPLICATION_FORM_URLENCODED.toString())
+		request.addHeader(CONTENT_TYPE.toString(), APPLICATION_FORM_URLENCODED.toString())
 
 		when: 'the request and its response are recorded'
 		tape.record(request, plainTextResponse)

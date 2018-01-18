@@ -14,11 +14,11 @@ class ContentEncodingSpec extends Specification {
 	void 'a #encoding encoded response body is stored as plain text in a tape file'() {
 		given:
 		def request = new BasicRequest('GET', 'http://freeside.co/betamax')
-		request.addHeader(ACCEPT_ENCODING, encoding)
+		request.addHeader(ACCEPT_ENCODING.toString(), encoding)
 
 		def response = new BasicResponse(HTTP_OK, 'OK')
-		response.addHeader(CONTENT_TYPE, 'text/plain')
-		response.addHeader(CONTENT_ENCODING, encoding)
+		response.addHeader(CONTENT_TYPE.toString(), 'text/plain')
+		response.addHeader(CONTENT_ENCODING.toString(), encoding)
 		response.body = encoder.encode('O HAI!')
 
 		and:

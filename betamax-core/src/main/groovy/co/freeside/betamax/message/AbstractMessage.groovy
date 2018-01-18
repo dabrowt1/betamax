@@ -17,7 +17,7 @@
 package co.freeside.betamax.message
 
 import java.util.zip.*
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import static org.apache.http.HttpHeaders.*
 
 abstract class AbstractMessage implements Message {

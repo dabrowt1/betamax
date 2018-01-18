@@ -4,6 +4,7 @@ import co.freeside.betamax.message.*
 import co.freeside.betamax.message.httpclient.HttpResponseAdapter
 import org.apache.http.*
 import org.apache.http.client.HttpClient
+import org.apache.http.conn.ConnectTimeoutException
 import org.apache.http.entity.ByteArrayEntity
 import org.apache.http.impl.DefaultHttpRequestFactory
 import static co.freeside.betamax.Headers.VIA_HEADER
@@ -25,7 +26,7 @@ class TargetConnector implements HttpHandler {
 		try {
 			def response = httpClient.execute(httpHost, outboundRequest)
 			new HttpResponseAdapter(response)
-		} catch (SocketTimeoutException e) {
+		} catch (SocketTimeoutException | ConnectTimeoutException e) {
 			throw new TargetTimeoutException(request.uri, e)
 		} catch (IOException e) {
 			throw new TargetErrorException(request.uri, e)
@@ -35,9 +36,9 @@ class TargetConnector implements HttpHandler {
 	private HttpRequest createOutboundRequest(Request request) {
 		def outboundRequest = httpRequestFactory.newHttpRequest(request.method, request.uri.toString())
 		request.headers.each { name, value ->
-			outboundRequest.addHeader(name, value)
+			outboundRequest.addHeader(name.toString(), value)
 		}
-		outboundRequest.addHeader(VIA, VIA_HEADER)
+		outboundRequest.addHeader(VIA.toString(), VIA_HEADER)
 		if (request.hasBody()) {
 			outboundRequest.entity = new ByteArrayEntity(request.bodyAsBinary.bytes)
 		}

@@ -36,7 +36,7 @@ class HttpRequestAdapter extends HttpMessageAdapter<HttpRequest> implements Requ
 		if (delegate instanceof HttpEntityEnclosingRequest) {
 			delegate.entity.content
 		} else {
-			throw new IllegalStateException('no body')
+			new ByteArrayInputStream()
 		}
 	}
 }

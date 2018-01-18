@@ -28,7 +28,7 @@ class TapeWriter extends ChainedHttpHandler {
 		log.log INFO, "Recording to '$tape.name'"
 		tape.record(request, response)
 
-		response.addHeader(X_BETAMAX, 'REC')
+		response.addHeader(X_BETAMAX.toString(), 'REC'.toString())
 
 		response
 	}

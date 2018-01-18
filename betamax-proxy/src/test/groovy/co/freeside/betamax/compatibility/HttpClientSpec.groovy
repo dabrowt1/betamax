@@ -19,13 +19,11 @@ import static org.apache.http.conn.params.ConnRoutePNames.DEFAULT_PROXY
 class HttpClientSpec extends Specification {
 
 	@AutoCleanup('deleteDir') File tapeRoot = newTempDir('tapes')
-	@Rule ProxyRecorder recorder = new ProxyRecorder(tapeRoot: tapeRoot, defaultMode: WRITE_ONLY, sslSupport: true)
+	@Rule ProxyRecorder recorder = new ProxyRecorder(tapeRoot: tapeRoot, defaultMode: WRITE_ONLY)
 	@Shared @AutoCleanup('stop') SimpleServer endpoint = new SimpleServer()
-	@Shared @AutoCleanup('stop') SimpleServer httpsEndpoint = new SimpleSecureServer(5001)
 
 	void setupSpec() {
 		endpoint.start(EchoHandler)
-		httpsEndpoint.start(HelloHandler)
 	}
 
 	@Timeout(10)
@@ -73,29 +71,5 @@ class HttpClientSpec extends Specification {
 		then:
 		response.statusLine.statusCode == HTTP_OK
 		response.getFirstHeader(VIA)?.value == 'Betamax'
-	}
-
-	@Betamax(tape = 'http client spec')
-	void 'proxy can intercept HTTPS requests'() {
-		given:
-		def http = new DefaultHttpClient()
-		BetamaxRoutePlanner.configure(http)
-		BetamaxHttpsSupport.configure(http)
-
-		when: 'an HTTPS request is made'
-		def request = new HttpGet(httpsEndpoint.url)
-		def response = http.execute(request)
-
-		and: 'we read the response body'
-		def responseBytes = new ByteArrayOutputStream()
-		response.entity.writeTo(responseBytes)
-		def responseString = responseBytes.toString('UTF-8')
-
-		then: 'the request is intercepted by the proxy'
-		response.statusLine.statusCode == SC_OK
-		response.getFirstHeader(VIA)?.value == 'Betamax'
-
-		and: 'the response is decoded'
-		responseString == 'Hello World!'
 	}
 }

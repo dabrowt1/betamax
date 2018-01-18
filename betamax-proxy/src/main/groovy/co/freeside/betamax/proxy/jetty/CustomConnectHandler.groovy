@@ -1,9 +1,13 @@
 package co.freeside.betamax.proxy.jetty
 
+import org.eclipse.jetty.server.Request
+import org.eclipse.jetty.util.Promise
+
+import javax.servlet.http.HttpServletResponse
 import java.nio.channels.SocketChannel
 import javax.servlet.http.HttpServletRequest
 import org.eclipse.jetty.server.Handler
-import org.eclipse.jetty.server.handler.ConnectHandler
+import org.eclipse.jetty.proxy.ConnectHandler
 
 class CustomConnectHandler extends ConnectHandler {
 
@@ -15,10 +19,7 @@ class CustomConnectHandler extends ConnectHandler {
 	}
 
 	@Override
-	protected SocketChannel connect(HttpServletRequest request, String host, int port) {
-		def channel = SocketChannel.open()
-		channel.socket().tcpNoDelay = true
-		channel.socket().connect(new InetSocketAddress('127.0.0.1', sslPort), connectTimeout)
-		channel
+	protected void handleConnect(Request baseRequest, HttpServletRequest request, HttpServletResponse response, String serverAddress) {
+		super.handleConnect(baseRequest, request, response, '127.0.0.1')
 	}
 }

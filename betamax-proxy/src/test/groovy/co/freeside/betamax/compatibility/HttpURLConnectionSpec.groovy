@@ -14,13 +14,11 @@ import static org.apache.http.HttpStatus.SC_OK
 class HttpURLConnectionSpec extends Specification {
 
 	@AutoCleanup('deleteDir') File tapeRoot = newTempDir('tapes')
-	@Rule Recorder recorder = new ProxyRecorder(tapeRoot: tapeRoot, defaultMode: WRITE_ONLY, sslSupport: true)
+	@Rule Recorder recorder = new ProxyRecorder(tapeRoot: tapeRoot, defaultMode: WRITE_ONLY)
 	@Shared @AutoCleanup('stop') SimpleServer endpoint = new SimpleServer()
-	@Shared @AutoCleanup('stop') SimpleServer httpsEndpoint = new SimpleSecureServer(5001)
 
 	void setupSpec() {
 		endpoint.start(EchoHandler)
-		httpsEndpoint.start(HelloHandler)
 	}
 
 	@Timeout(10)
@@ -36,16 +34,5 @@ class HttpURLConnectionSpec extends Specification {
 
 		cleanup:
 		connection.disconnect()
-	}
-
-	@Betamax(tape = 'http url connection spec', mode = WRITE_ONLY)
-	void 'proxy intercepts HTTPS requests'() {
-		when:
-		HttpURLConnection connection = httpsEndpoint.url.toURL().openConnection()
-
-		then:
-		connection.responseCode == SC_OK
-		connection.getHeaderField(VIA) == 'Betamax'
-		connection.inputStream.text == 'Hello World!'
 	}
 }

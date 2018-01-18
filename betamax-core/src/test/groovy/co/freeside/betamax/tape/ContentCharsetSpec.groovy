@@ -16,8 +16,8 @@ class ContentCharsetSpec extends Specification {
 		def request = new BasicRequest()
 
 		def response = new BasicResponse(HTTP_OK, 'OK')
-		response.addHeader(CONTENT_TYPE, "text/plain;charset=$charset")
-		response.addHeader(CONTENT_ENCODING, encoding)
+		response.addHeader(CONTENT_TYPE.toString(), "text/plain;charset=$charset")
+		response.addHeader(CONTENT_ENCODING.toString(), encoding)
 		response.body = encoder ? encoder.encode('\u00a3', charset) : '\u00a3'.getBytes(charset)
 
 		and:

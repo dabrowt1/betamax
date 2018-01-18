@@ -53,11 +53,6 @@ class TapeRepresenter extends GroovyRepresenter {
 		}
 	}
 
-	@Override
-	protected Node representMapping(Tag tag, Map<? extends Object, Object> mapping, Boolean flowStyle) {
-		super.representMapping(tag, mapping.sort(), flowStyle)
-	}
-
 	private class RepresentURI implements Represent {
 		Node representData(Object data) {
 			representScalar STR, data.toString()
@@ -83,8 +78,8 @@ class TapePropertyUtils extends PropertyUtils {
 		}
 	}
 
-	private Set<Property> sort(Set<Property> properties, List<String> names) {
-		new LinkedHashSet(properties.sort(new OrderedPropertyComparator(names)))
+	private static Set<Property> sort(Set<Property> properties, List<String> names) {
+		new LinkedHashSet(properties.sort(false, new OrderedPropertyComparator(names)))
 	}
 }
 

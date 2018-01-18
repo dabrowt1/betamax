@@ -1,21 +1,10 @@
-repositories {
-	mavenRepo url: 'http://repository.codehaus.org'
-}
-
 dependencies {
 	compile httpClientDependency,
 			junitDependency,
-			'org.yaml:snakeyaml:1.11',
-			'commons-lang:commons-lang:2.4'
+			'org.yaml:snakeyaml:1.19',
+      'org.apache.commons:commons-lang3:3.6'
 
 	testCompile project(':betamax-test-support')
 
 	testRuntime 'cglib:cglib-nodep:2.2.2'
-}
-
-modifyPom {
-	project {
-		name 'Betamax Proxy'
-		description 'Betamax is a test tool that records and plays back HTTP traffic in tests. Inspired by Ruby\'s VCR.'
-	}
 }
